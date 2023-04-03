@@ -1,8 +1,12 @@
 from models.ising import Ising
 from models.imager import Imager
+import gc
 
 ising = Ising()
-grid, energy, magnet = ising.metropolis(151, 2.229, 300000)
+images = 100
+grid, energy, magnet = ising.metropolis(255, 2.229, 1000000, lieb=False, store_times=images)
 
 imager = Imager()
-imager.gif_from_grid(grid, 30)
+imager.gif_from_grid(grid, images)
+del grid
+gc.collect()
