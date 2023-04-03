@@ -4,7 +4,7 @@ import gc
 
 ising = Ising()
 images = 100
-grid, energy, magnet = ising.metropolis(255, 2.229, 1000000, lieb=False, store_times=images)
+grid, energy, magnet = ising.metropolis(315, 2.229, 300000, lieb=False, store_times=images)
 
 imager = Imager()
 imager.gif_from_grid(grid, images)
