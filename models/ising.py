@@ -22,7 +22,7 @@ class Ising():
             for j in range(cols):
                 if i % 2 != 0 and j % 2 != 0:
                     self.grid[i, j] = 0
-                    
+        
     def metropolis_step(self, T):
         # 2. Choisir un site j et proposer d’inverser le spin a cet endroit, c’est-a-dire sj -> -sj (si avec i =/= j reste inchange).
         i, j = self.find_random_spin()
@@ -34,21 +34,24 @@ class Ising():
             self.grid[i, j] *= -1
         
     
-    def metropolis(self, N, T, steps, fast=True):
-        grid = []
-        energy = []
-        magnet = []
+    def metropolis(self, N, T, steps, fast=True, lieb=True):
+        grid = np.empty((steps, N, N))
+        energy = np.empty((steps, N, N))
+        magnet = np.empty((steps, N, N))
         # 1. Choisir un etat initial.
-        self.lieb(N)
+        if lieb:
+            self.lieb(N)
+        else:
+            self.grid = np.random.choice([-1, 1], size=(N, N))
         percentage = 0
         for i in range(steps):
             percentage = int(m.ceil((i/steps)*100))
             sys.stdout.write('\rComputing metropolis\t' + '.' * percentage + ' ' + str(percentage) + '%')
             self.metropolis_step(T)
-            grid.append(np.copy(self.grid))
+            grid[i] = self.grid
             if not fast:
-                energy.append(self.energy())
-                magnet.append(self.magnetization())
+                energy[i] = self.energy()
+                magnet[i] = self.magnetization()
         sys.stdout.write('\n')
         return grid, energy, magnet
 
