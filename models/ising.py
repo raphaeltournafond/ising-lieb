@@ -34,25 +34,38 @@ class Ising():
             self.grid[i, j] *= -1
         
     
-    def metropolis(self, N, T, steps, fast=True, lieb=True):
-        grid = np.empty((steps, N, N))
-        energy = np.empty((steps, N, N))
-        magnet = np.empty((steps, N, N))
-        # 1. Choisir un etat initial.
-        if lieb:
-            self.lieb(N)
-        else:
-            self.grid = np.random.choice([-1, 1], size=(N, N))
-        percentage = 0
-        for i in range(steps):
-            percentage = int(m.ceil((i/steps)*100))
-            sys.stdout.write('\rComputing metropolis\t' + '.' * percentage + ' ' + str(percentage) + '%')
-            self.metropolis_step(T)
-            grid[i] = self.grid
+    def metropolis(self, N, T, steps, fast=True, lieb=True, store_times=50):
+        grid = None
+        if steps >= store_times:
+            # 1. Choisir un etat initial.
+            if lieb:
+                self.lieb(N)
+            else:
+                self.grid = np.random.choice([-1, 1], size=(N, N))
+
+            grid = np.zeros((store_times, N, N), dtype=np.int8)
+            energy = None
+            magnet = None
             if not fast:
-                energy[i] = self.energy()
-                magnet[i] = self.magnetization()
-        sys.stdout.write('\n')
+                energy = np.zeros((store_times, N, N), dtype=np.float32)
+                magnet = np.zeros((store_times, N, N), dtype=np.float32)
+
+            # Run simulation
+            percentage = 0
+            j = 0
+            modulus = steps/store_times
+            for i in range(steps):
+                percentage = int(m.ceil((i/steps)*100))
+                sys.stdout.write('\rComputing metropolis\t' + '.' * percentage + ' ' + str(percentage) + '%')
+                self.metropolis_step(T)
+                if i % modulus == 0:
+                    grid[j] = self.grid
+                    if not fast:
+                        energy[j] = self.energy()
+                        magnet[j] = self.magnetization()
+                    j += 1
+            sys.stdout.write('\n')
+
         return grid, energy, magnet
 
     def energy(self):
