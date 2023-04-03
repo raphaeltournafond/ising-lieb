@@ -2,6 +2,7 @@ import numpy as np
 import random as rd
 import math as m
 import matplotlib.pyplot as plt
+import sys
 
 class Ising():
     grid: np.matrix
@@ -39,12 +40,16 @@ class Ising():
         magnet = []
         # 1. Choisir un etat initial.
         self.lieb(N)
-        for _ in range(steps):
+        percentage = 0
+        for i in range(steps):
+            percentage = int(m.ceil((i/steps)*100))
+            sys.stdout.write('\rComputing metropolis\t' + '.' * percentage + ' ' + str(percentage) + '%')
             self.metropolis_step(T)
             grid.append(np.copy(self.grid))
             if not fast:
                 energy.append(self.energy())
                 magnet.append(self.magnetization())
+        sys.stdout.write('\n')
         return grid, energy, magnet
 
     def energy(self):
