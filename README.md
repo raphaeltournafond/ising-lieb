@@ -3,8 +3,8 @@ Modèle d'ising ferromagnétique sur le réseau de Lieb
 
 ## Lieb
 
-![Lieb](results/lieb.gif)
+![Lieb](images/results/lieb.gif)
 
 ## Sans Lieb
 
-![Full](results/full.gif)
+![Full](images/results/full.gif)

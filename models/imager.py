@@ -2,6 +2,7 @@ import imageio
 import matplotlib.pyplot as plt
 import sys
 import math as m
+import time
 
 class Imager():
     images_index: list
@@ -13,7 +14,7 @@ class Imager():
     def create_frame(self, grid, t):
         plt.imshow(grid, cmap='binary')
         plt.title(f't = {t}', fontsize=14)
-        plt.savefig(f'./images/img_{t}.png', 
+        plt.savefig(f'./images/storage/img_{t}.png', 
             transparent = False,  
             facecolor = 'white'
             )
@@ -28,13 +29,13 @@ class Imager():
         for f in self.images_index:
             percentage = int(m.ceil((i/steps)*100))
             sys.stdout.write('\rGenerating animation\t' + '.' * percentage + ' ' + str(percentage) + '%')
-            image = imageio.v2.imread(f'./images/img_{f}.png')
+            image = imageio.v2.imread(f'./images/storage/img_{f}.png')
             frames.append(image)
             i += 1
         sys.stdout.write('\n')
 
         sys.stdout.write('\rSaving gif file...')
-        imageio.mimsave('./images/animation.gif', # output gif
+        imageio.mimsave('./images/results/animation' + str(time.time()).replace('.', '') + '.gif', # output gif
                 frames,          # array of input frames
                 fps = 25)         # optional: frames per second
 
